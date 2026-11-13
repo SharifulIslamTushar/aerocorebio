@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AeroCore Bio – Contact the team</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#10212B;--muted:#4A5B64;--teal:#0F7C7A;--teal-d:#0B6664;--aqua:#E3F2F1;--line:#D5E1E6}
+  *{box-sizing:border-box}
+  body{margin:0;background:#F4F8F8;color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.5}
+  .wrap{max-width:560px;margin:0 auto;padding:28px 18px 40px}
+  header{display:flex;align-items:center;gap:10px}
+  .brand{font-family:'Space Grotesk',Inter,sans-serif;font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .brand span{color:var(--teal);font-weight:600}
+  .intro{margin:14px 0 22px;color:var(--muted);font-size:16px}
+  .intro strong{color:var(--ink)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+  .name{font-family:'Space Grotesk',Inter,sans-serif;font-size:20px;font-weight:700;margin:0}
+  .role{color:var(--muted);font-size:14px;margin:2px 0 12px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+  .row a{color:var(--teal-d);font-weight:500;text-decoration:none;word-break:break-all;font-size:15px}
+  .row a:hover{text-decoration:underline}
+  .label{display:block;font-size:12px;color:var(--muted)}
+  button{font:inherit;font-size:14px;font-weight:500;border-radius:999px;cursor:pointer;min-height:44px;padding:0 16px}
+  .copy{background:#fff;border:1.5px solid var(--line);color:var(--ink);flex:none}
+  .copy:hover{border-color:var(--teal)}
+  .save{margin-top:12px;display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:999px;font-size:14px;font-weight:500;text-decoration:none;background:var(--teal);color:#fff}
+  .save:hover{background:var(--teal-d)}
+    .msg{font-size:13px;color:var(--teal-d);min-height:18px;margin-top:6px}
+  footer{margin-top:22px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg aria-hidden="true" width="30" height="36" viewBox="0 0 40 48"><path d="M20 2 C20 2 4 19 4 31 A16 16 0 0 0 36 31 C36 19 20 2 20 2 Z" fill="#0F7C7A"/><circle cx="15" cy="30" r="4.2" fill="#fff"/><circle cx="25.5" cy="35.5" r="3.2" fill="#fff"/><circle cx="23.5" cy="24.5" r="2.4" fill="#fff"/><circle cx="14.5" cy="39.5" r="2" fill="#fff"/><circle cx="20" cy="17" r="1.6" fill="#fff"/></svg>
+    <div class="brand">AeroCore<span> Bio</span></div>
+  </header>
+  <p class="intro"><strong>Bio-based aerogel absorbent cores.</strong> We're an NSF I-Corps team. Reach any of us for a 15-minute conversation, data or samples.</p>
+  <main id="team"></main>
+  <footer>University of Georgia · Patent pending (PCT/US2025/032062; WO2025255110A1)</footer>
+</div>
+<script>
+const team = [
+  {first:"Shariful Islam", last:"Tushar", name:"Shariful Islam Tushar", role:"Entrepreneurial Lead", org:"University of Georgia", phone:"+14058940973", phoneText:"(405) 894-0973", email:"sharifulislam.tushar@uga.edu"},
+  {first:"Suraj", last:"Sharma", name:"Dr. Suraj Sharma", role:"Technical Lead", org:"University of Georgia", phone:"+18646505957", phoneText:"(864) 650-5957", email:"ssharma@uga.edu"},
+  {first:"David", last:"Sasso", name:"David Sasso", role:"Industry Mentor", org:"GATE", phone:"+17062152602", phoneText:"(706) 215-2602", email:"david@gateinnovations.com"}
+];
+const el = (t, a = {}, kids = []) => { const n = document.createElement(t); Object.assign(n, a); kids.forEach(k => n.append(k)); return n; };
+
+function vcard(p){
+  return ["BEGIN:VCARD","VERSION:3.0",`N:${p.last};${p.first};;;`,`FN:${p.name}`,`ORG:AeroCore Bio (${p.org})`,`TITLE:${p.role}`,`TEL;TYPE=CELL:${p.phone}`,`EMAIL;TYPE=WORK:${p.email}`,"END:VCARD"].join("\r\n");
+}
+function copyRow(label, href, text, msg){
+  const btn = el("button", {className:"copy", type:"button", textContent:"Copy"});
+  btn.setAttribute("aria-label", `Copy ${label.toLowerCase()} ${text}`);
+  btn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(text); msg.textContent = `${label} copied.`; }
+    catch { msg.textContent = `Couldn't copy. ${label}: ${text}`; }
+  });
+  return el("div", {className:"row"}, [
+    el("div", {}, [el("span", {className:"label", textContent:label}), el("a", {href, textContent:text})]),
+    btn
+  ]);
+}
+team.forEach(p => {
+  const msg = el("div", {className:"msg", role:"status"});
+  const url = URL.createObjectURL(new Blob([vcard(p)], {type:"text/vcard"}));
+  const save = el("a", {className:"save", href:url, download:p.name.replace(/[^A-Za-z]+/g,"-") + ".vcf", textContent:`Save ${p.name.replace("Dr. ","").split(" ")[0]}'s contact`});
+  document.getElementById("team").append(el("section", {className:"card"}, [
+    el("h2", {className:"name", textContent:p.name}),
+    el("p", {className:"role", textContent:`${p.role}, ${p.org}`}),
+    copyRow("Phone", `tel:${p.phone}`, p.phoneText, msg),
+    copyRow("Email", `mailto:${p.email}`, p.email, msg),
+    save, msg
+  ]));
+});
+</script>
+</body>
+</html>
